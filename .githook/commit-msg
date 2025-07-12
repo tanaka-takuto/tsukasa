@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# コミットメッセージチェックスクリプト
+# 空のメッセージや一般的でないパターンをチェック
+
+commit_regex='^(feat|fix|docs|style|refactor|test|chore): .{1,50}'
+
+if ! grep -qE "$commit_regex" "$1"; then
+    echo "エラー: コミットメッセージが規則に従っていません。"
+    echo "形式: type: description"
+    echo "type: feat, fix, docs, style, refactor, test, chore のいずれか"
+    echo "例: feat: add login functionality"
+    exit 1
+fi
+
+# メッセージが長すぎる場合のチェック
+first_line=$(head -n1 "$1")
+if [ ${#first_line} -gt 72 ]; then
+    echo "警告: コミットメッセージの1行目が72文字を超えています。"
+    echo "現在の文字数: ${#first_line}"
+fi
